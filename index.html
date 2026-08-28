@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เป๋าเงินของคุณหนู - Financial Dashboard</title>
+  
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root { --ink:#334155; --muted:#718096; --card:rgba(255,255,255,.82); --line:#edf1f5; }
+    * { box-sizing:border-box; }
+    body { font-family:"DM Sans",sans-serif; color:var(--ink); transition:background .25s,color .25s; }
+    .app-shell { width:100%; min-height:100vh; background: radial-gradient(circle at 8% 8%, rgba(253,230,219,.68), transparent 23rem), radial-gradient(circle at 92% 15%, rgba(220,240,235,.78), transparent 25rem), #f8fafc; }
+    .soft-card { background:var(--card); border:1px solid var(--line); box-shadow:0 10px 30px rgba(82,99,118,.06); backdrop-filter:blur(14px); }
+    .headline { font-family:"Fraunces",serif; }
+    .tab-btn.active { background:#ffffff; color:#334155; box-shadow:0 4px 12px rgba(0,0,0,.08); font-weight:700; border-color:#e2e8f0; }
+    .donut { width:154px; height:154px; border-radius:50%; background:conic-gradient(#f3a7ad 0 42%, #9fc8e6 42% 67%, #d6b6e9 67% 84%, #f6d887 84% 100%); position:relative; }
+    .donut:after { content:""; position:absolute; inset:25px; background:#fffdfb; border-radius:50%; }
+    .modal-backdrop { opacity:0; pointer-events:none; transition:opacity .25s ease; }
+    .modal-backdrop.open { opacity:1; pointer-events:auto; }
+    .modal-panel { transform:translateY(24px) scale(.98); transition:transform .25s ease; }
+    .modal-backdrop.open .modal-panel { transform:translateY(0) scale(1); }
+  </style>
+</head>
+
+<body style="background: rgb(248, 250, 252);">
+  <div class="app-shell">
+    
+    <!-- Top Minimal Header -->
+    <header class="w-full px-4 pt-5 sm:px-7 lg:px-10">
+      <nav class="soft-card mx-auto flex max-w-7xl items-center justify-between rounded-3xl px-4 py-3 sm:px-6">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-100 text-xl">🌸</div>
+          <div>
+            <p class="headline font-bold text-slate-700 text-base">เป๋าเงินของคุณหนู Sparkle✨ </p>
+            <p class="text-xs text-slate-500">พื้นที่เล็ก ๆ เพื่ออนาคตที่อุ่นใจ💕</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="month-button" type="button" class="focus-ring rounded-xl border border-slate-100 bg-white/70 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-50">
+            <span id="month-label">กำลังโหลด...</span>
+          </button>
+          <div class="hidden h-9 w-9 items-center justify-center rounded-full bg-amber-100 text-base sm:flex">👧</div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="mx-auto w-full max-w-7xl px-4 pb-10 pt-4 sm:px-7 lg:px-10">
+
+      <!-- Prominent Central Navigation Bar -->
+      <section class="mb-6">
+        <div class="flex overflow-x-auto gap-2 rounded-2xl bg-slate-200/60 p-2 text-sm font-semibold text-slate-600 shadow-inner">
+          <button data-tab="tab-overview" class="tab-btn active flex-1 min-w-[140px] rounded-xl px-4 py-3 text-center transition hover:bg-white/60">🏠 ภาพรวม & รายวัน</button>
+          <button data-tab="tab-debts" class="tab-btn flex-1 min-w-[120px] rounded-xl px-4 py-3 text-center transition hover:bg-white/60">💳 จัดการหนี้สิน</button>
+          <button data-tab="tab-savings" class="tab-btn flex-1 min-w-[140px] rounded-xl px-4 py-3 text-center transition hover:bg-white/60">📈 เงินออม & พอร์ต</button>
+          <button data-tab="tab-goals" class="tab-btn flex-1 min-w-[140px] rounded-xl px-4 py-3 text-center transition hover:bg-white/60">🎯 เป้าหมาย & สำรอง</button>
+          <button data-tab="tab-report" class="tab-btn flex-1 min-w-[140px] rounded-xl px-4 py-3 text-center transition hover:bg-white/60">📑 รายงานประจำเดือน</button>
+        </div>
+      </section>
+
+      <!-- TAB 1: ภาพรวม & บันทึกรายจ่ายประจำวัน -->
+      <div id="tab-overview" class="tab-content">
+        <div class="mb-4 flex items-end justify-between">
+          <div>
+            <p class="text-sm font-semibold text-purple-600">สวัสดีค่ะ คุณหนู 🌷</p>
+            <h1 class="headline mt-1 text-2xl sm:text-3xl font-bold text-slate-700">ภาพรวมการเงินและการกินใช้ประจำวัน</h1>
+          </div>
+          <button id="btn-open-general-modal" class="rounded-2xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700">
+            ✍️ + บันทึกรายรับ/รายจ่ายประจำวัน
+          </button>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid gap-4 md:grid-cols-3">
+          <article class="soft-card rounded-3xl p-5" style="background:#fff1cf">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs font-semibold text-amber-700">Net Worth (ความมั่งคั่งสุทธิ)</p>
+                <p id="net-worth" class="headline mt-1 text-2xl font-bold text-amber-800">฿0</p>
+              </div>
+              <span class="rounded-2xl bg-white/60 p-2 text-lg">✨</span>
+            </div>
+            <p id="net-worth-note" class="mt-3 text-xs font-medium text-amber-700">เงินออม ฿0 · หนี้คงเหลือ ฿0</p>
+          </article>
+
+          <article class="soft-card rounded-3xl p-5" style="background:#e4f5ee">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs font-semibold text-emerald-700">รายรับเดือนนี้</p>
+                <p id="income-total" class="headline mt-1 text-2xl font-bold text-emerald-800">฿0</p>
+              </div>
+              <span class="rounded-2xl bg-white/60 p-2 text-lg">🍃</span>
+            </div>
+            <p class="mt-3 text-xs font-medium text-emerald-700">ทุกก้าวเล็ก ๆ มีความหมาย</p>
+          </article>
+
+          <article class="soft-card rounded-3xl p-5" style="background:#fde7e8">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs font-semibold text-rose-700">รายจ่ายรวมเดือนนี้ (รวมตัดออม/หนี้)</p>
+                <p id="expense-total" class="headline mt-1 text-2xl font-bold text-rose-800">฿0</p>
+              </div>
+              <span class="rounded-2xl bg-white/60 p-2 text-lg">🌸</span>
+            </div>
+            <p class="mt-3 text-xs font-medium text-rose-700">ใช้จ่ายอย่างอ่อนโยนกับตัวเอง</p>
+          </article>
+        </div>
+
+        <div class="mt-6 grid gap-5 lg:grid-cols-[1fr_1.1fr]">
+          <article class="soft-card rounded-3xl p-5">
+            <h2 class="text-lg font-bold text-slate-700 mb-3">สัดส่วนรายจ่ายกินใช้เดือนนี้</h2>
+            <div class="flex flex-col items-center gap-6 sm:flex-row">
+              <div class="donut shrink-0">
+                <div class="relative z-10 flex h-full items-center justify-center">
+                  <div class="text-center"><strong id="donut-total" class="block text-base">฿0</strong><span class="text-xs text-slate-400">รายจ่าย</span></div>
+                </div>
+              </div>
+              <div id="category-list" class="w-full space-y-3"></div>
+            </div>
+          </article>
+
+          <article class="soft-card rounded-3xl p-5">
+            <h2 class="text-lg font-bold text-slate-700 mb-3">สมุดบันทึกรายการกินใช้ล่าสุด</h2>
+            <div id="transaction-list" class="space-y-1"></div>
+            <p id="empty-transactions" class="py-5 text-center text-xs text-slate-400">ยังไม่มีรายการกินใช้ประจำวัน</p>
+          </article>
+        </div>
+      </div>
+
+      <!-- TAB 2: Debts -->
+      <div id="tab-debts" class="tab-content hidden">
+        <div class="mb-4 flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-rose-600">Debt Freedom Center 🏠</p>
+            <h1 class="headline text-2xl sm:text-3xl font-bold text-slate-700">จัดการภาระหนี้สิน</h1>
+          </div>
+          <button id="btn-open-create-debt" class="rounded-2xl bg-rose-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-rose-700">
+            ➕ ตั้งภาระหนี้ก้อนใหม่ (ผ่อนบ้าน/ผ่อนมือถือ)
+          </button>
+        </div>
+        <div id="debts-main-list" class="grid gap-4 md:grid-cols-2"></div>
+      </div>
+
+      <!-- TAB 3: Savings -->
+      <div id="tab-savings" class="tab-content hidden">
+        <div class="mb-4 flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-emerald-600">Wealth & Growth ☁️</p>
+            <h1 class="headline text-2xl sm:text-3xl font-bold text-slate-700">พอร์ตเงินออม / สหกรณ์ / PVD / หุ้น</h1>
+          </div>
+          <button id="btn-open-create-inv" class="rounded-2xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700">
+            ➕ เพิ่มพอร์ต/บัญชีเงินออมใหม่
+          </button>
+        </div>
+        <div id="savings-main-list" class="grid gap-4 md:grid-cols-2"></div>
+      </div>
+
+      <!-- TAB 4: Goals -->
+      <div id="tab-goals" class="tab-content hidden">
+        <div class="mb-4 flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-purple-600">Dream Fund & Emergency 🎯</p>
+            <h1 class="headline text-2xl sm:text-3xl font-bold text-slate-700">เป้าหมายการออม / เงินสำรองฉุกเฉิน</h1>
+          </div>
+          <button id="btn-open-create-goal" class="rounded-2xl bg-purple-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-purple-700">
+            ➕ สร้างเป้าหมายการออมใหม่
+          </button>
+        </div>
+        <div id="goals-main-list" class="grid gap-4 md:grid-cols-2"></div>
+      </div>
+
+      <!-- TAB 5: Statement Report -->
+      <div id="tab-report" class="tab-content hidden">
+        <div class="soft-card mb-6 rounded-3xl p-5">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p class="text-xs font-semibold text-sky-600">Monthly Statement</p>
+              <h2 class="text-xl font-bold text-slate-700">📑 รายงานสรุปการเงินประจำเดือน</h2>
+            </div>
+            
+            <div id="report-filter-container" class="flex items-center gap-2">
+              <label class="text-xs font-semibold text-slate-600">เลือกรอบเดือน/ปี:</label>
+              <select id="report-year" class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 bg-white"></select>
+              <select id="report-month" class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 bg-white"></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="soft-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-5">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-wider text-purple-600">Financial Statement Certificate</p>
+              <h3 id="report-header-title" class="headline mt-1 text-2xl font-bold text-slate-800">สรุปการเงินประจำเดือน</h3>
+              <p class="text-xs text-slate-400 mt-0.5">เจ้าของบัญชี: คุณหนู 🌸</p>
+            </div>
+            <div class="text-right">
+              <span class="rounded-2xl bg-amber-50 border border-amber-100 px-3 py-1.5 text-xs font-bold text-amber-700">
+                สเตตเมนต์อย่างเป็นทางการ ✨
+              </span>
+            </div>
+          </div>
+
+          <div class="my-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div class="rounded-2xl bg-emerald-50/60 p-4 border border-emerald-100">
+              <span class="text-[11px] font-semibold text-emerald-700">📥 รายรับรวม</span>
+              <p id="rpt-income-val" class="mt-1 text-lg font-bold text-emerald-800">฿0</p>
+              <span id="rpt-income-cnt" class="text-[10px] text-emerald-600">0 รายการ</span>
+            </div>
+            <div class="rounded-2xl bg-rose-50/60 p-4 border border-rose-100">
+              <span class="text-[11px] font-semibold text-rose-700">📤 รายจ่ายรวม</span>
+              <p id="rpt-expense-val" class="mt-1 text-lg font-bold text-rose-800">฿0</p>
+              <span id="rpt-expense-cnt" class="text-[10px] text-rose-600">0 รายการ</span>
+            </div>
+            <div class="rounded-2xl bg-sky-50/60 p-4 border border-sky-100">
+              <span class="text-[11px] font-semibold text-sky-700">🐷 หยอดออม/ลงทุน</span>
+              <p id="rpt-savings-val" class="mt-1 text-lg font-bold text-sky-800">฿0</p>
+              <span id="rpt-savings-cnt" class="text-[10px] text-sky-600">0 รายการ</span>
+            </div>
+            <div class="rounded-2xl bg-purple-50/60 p-4 border border-purple-100">
+              <span class="text-[11px] font-semibold text-purple-700">⚖️ คงเหลือสุทธิเดือนนี้</span>
+              <p id="rpt-net-val" class="mt-1 text-lg font-bold text-purple-800">฿0</p>
+              <span class="text-[10px] text-purple-600">รายรับ - รายจ่าย</span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider bg-slate-50">
+                  <th class="py-3 px-3">วันที่</th>
+                  <th class="py-3 px-3">รายละเอียด / รายการ</th>
+                  <th class="py-3 px-3">หมวดหมู่</th>
+                  <th class="py-3 px-3">ช่องทางชำระ</th>
+                  <th class="py-3 px-3 text-right">จำนวนเงิน (บาท)</th>
+                  <th class="py-3 px-3 text-center">สลิป</th>
+                </tr>
+              </thead>
+              <tbody id="report-table-body" class="divide-y divide-slate-100 text-slate-700"></tbody>
+            </table>
+          </div>
+
+          <p id="report-empty-msg" class="py-8 text-center text-xs text-slate-400">ยังไม่มีรายการบันทึกสำหรับทำรายงาน ลองเริ่มบันทึกรายการแรกดูนะคะ 🌸</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODALS -->
+  <!-- MODAL 1: บันทึกกินใช้ทั่วไป -->
+  <div id="modal-general" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
+    <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-slate-700">✍️ บันทึกกินใช้ประจำวัน</h2>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600"><i data-lucide="x" width="20" height="20"></i></button>
+      </div>
+      <form id="form-general" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">รายละเอียด</label>
+          <input id="gen-desc" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required placeholder="เช่น ค่าข้าวเย็น, ค่าน้ำมัน">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ประเภท</label>
+            <select id="gen-type" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+              <option value="Expense">รายจ่าย</option>
+              <option value="Income">รายรับ</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">จำนวนเงิน (บาท)</label>
+            <input id="gen-amount" type="number" step="0.01" min="0.01" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required placeholder="0">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">หมวดหมู่</label>
+            <select id="gen-category" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ช่องทางชำระ</label>
+            <select id="gen-payment" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"></select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่ทำรายการ</label>
+          <input id="gen-date" type="date" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">แนบรูปสลิป (ลง Google Drive อัตโนมัติ 📁)</label>
+          <input id="gen-slip" type="file" accept="image/*" class="w-full text-xs text-slate-500">
+        </div>
+        <button type="submit" class="w-full rounded-xl bg-emerald-600 py-2.5 text-sm font-bold text-white hover:bg-emerald-700">💾 บันทึกรายการ</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: จ่ายหนี้สิน -->
+  <div id="modal-pay-debt" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
+    <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="text-xs font-semibold text-rose-600">Debt Payment</p>
+          <h2 id="pay-debt-title" class="text-xl font-bold text-slate-700">💳 จ่ายหนี้สินงวดนี้</h2>
+        </div>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600"><i data-lucide="x" width="20" height="20"></i></button>
+      </div>
+      <form id="form-pay-debt" class="space-y-3">
+        <input type="hidden" id="pay-debt-id">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">จำนวนเงินที่จ่าย (บาท)</label>
+          <input id="pay-debt-amount" type="number" step="0.01" min="1" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required placeholder="0">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">จ่ายจากบัญชี / ช่องทางชำระ</label>
+          <select id="pay-debt-payment" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่ทำรายการ</label>
+          <input id="pay-debt-date" type="date" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">คำอธิบายเพิ่มเติม</label>
+          <input id="pay-debt-desc" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" placeholder="เช่น งวดเดือน ส.ค. 2026">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">แนบรูปสลิปการจ่ายหนี้ (ลง Drive 📁)</label>
+          <input id="pay-debt-slip" type="file" accept="image/*" class="w-full text-xs text-slate-500">
+        </div>
+        <button type="submit" class="w-full rounded-xl bg-rose-600 py-2.5 text-sm font-bold text-white hover:bg-rose-700">💳 ยืนยันการชำระหนี้</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: เพิ่มรายการหนี้ก้อนใหม่ -->
+  <div id="modal-create-debt" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
+    <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-slate-700">🏠 ตั้งภาระหนี้ก้อนใหม่</h2>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600"><i data-lucide="x" width="20" height="20"></i></button>
+      </div>
+      <form id="form-create-debt" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อหนี้สิน / ผ่อนสินค้า</label>
+          <input id="new-debt-name" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required placeholder="เช่น สินเชื่อบ้าน, ผ่อน iPhone บัตร CardX">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ยอดหนี้เต็ม (บาท)</label>
+            <input id="new-debt-initial" type="number" min="1" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required placeholder="2000000">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ผ่อนเดือนละ (บาท)</label>
+            <input id="new-debt-monthly" type="number" min="1" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required placeholder="4500">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">คำอธิบายโน้ตเพิ่มเติม</label>
+          <input id="new-debt-note" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" placeholder="เช่น ผ่อนทุกวันที่ 25 ของเดือน">
+        </div>
+        <button type="submit" class="w-full rounded-xl bg-rose-600 py-2.5 text-sm font-bold text-white hover:bg-rose-700">💾 บันทึกการตั้งหนี้</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 4: ฝาก/ถอน เงินออม -->
+  <div id="modal-deposit-inv" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
+    <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="text-xs font-semibold text-emerald-600">Savings & Investment</p>
+          <h2 id="deposit-inv-title" class="text-xl font-bold text-slate-700">🐷 ฝากเงินออมเพิ่ม</h2>
+        </div>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600"><i data-lucide="x" width="20" height="20"></i></button>
+      </div>
+      <form id="form-deposit-inv" class="space-y-3">
+        <input type="hidden" id="dep-inv-id">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">รายการ</label>
+            <select id="dep-inv-action" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+              <option value="deposit">🐷 ฝากเงินเพิ่ม</option>
+              <option value="withdraw">🔄 ถอนเงินคืน</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">จำนวนเงิน (บาท)</label>
+            <input id="dep-inv-amount" type="number" step="0.01" min="1" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required placeholder="0">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">ช่องทางชำระ / รับเงิน</label>
+          <select id="dep-inv-payment" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"></select>
+        </div>
+        <div class="flex items-center gap-2 rounded-xl bg-slate-50 p-2.5 border border-slate-100">
+          <input type="checkbox" id="dep-inv-is-payroll" class="h-4 w-4 rounded text-emerald-600">
+          <label for="dep-inv-is-payroll" class="text-xs font-medium text-slate-600">หักก่อนรับเงินเดือน (เช่น PVD / สหกรณ์)</label>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่ทำรายการ</label>
+          <input id="dep-inv-date" type="date" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">คำอธิบาย</label>
+          <input id="dep-inv-desc" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" placeholder="เช่น ซื้อหุ้น S&P 500 เพิ่ม">
+        </div>
+        <button type="submit" class="w-full rounded-xl bg-emerald-600 py-2.5 text-sm font-bold text-white hover:bg-emerald-700">💾 บันทึกเงินออม</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 5: เพิ่มพอร์ตเงินออมใหม่ -->
+  <div id="modal-create-inv" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
+    <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-slate-700">☁️ เพิ่มพอร์ต/บัญชีเงินออมใหม่</h2>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600"><i data-lucide="x" width="20" height="20"></i></button>
+      </div>
+      <form id="form-create-inv" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อพอร์ต / บัญชี</label>
+          <input id="new-inv-name" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required placeholder="เช่น สหกรณ์ออมทรัพย์, PVD, ดัชนี S&P 500">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ประเภท</label>
+            <input id="new-inv-type" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" placeholder="เช่น สหกรณ์, PVD, หุ้น">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ยอดสะสมตั้งต้น (บาท)</label>
+            <input id="new-inv-initial" type="number" min="0" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" placeholder="0">
+          </div>
+        </div>
+        <div class="flex items-center gap-2 rounded-xl bg-slate-50 p-2.5 border border-slate-100">
+          <input type="checkbox" id="new-inv-payroll" class="h-4 w-4 rounded text-emerald-600">
+          <label for="new-inv-payroll" class="text-xs font-medium text-slate-600">พอร์ตนี้หักก่อนรับเงินเดือนเป็นหลัก</label>
+        </div>
+        <button type="submit" class="w-full rounded-xl bg-emerald-600 py-2.5 text-sm font-bold text-white hover:bg-emerald-700">💾 บันทึกพอร์ตใหม่</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 6: หยอด/ถอน เป้าหมาย -->
+  <div id="modal-deposit-goal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
+    <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="text-xs font-semibold text-purple-600">Goal Fund</p>
+          <h2 id="dep-goal-title" class="text-xl font-bold text-slate-700">🎯 หยอดเงินใส่เป้าหมาย</h2>
+        </div>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600"><i data-lucide="x" width="20" height="20"></i></button>
+      </div>
+      <form id="form-deposit-goal" class="space-y-3">
+        <input type="hidden" id="dep-goal-id">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">รายการ</label>
+            <select id="dep-goal-action" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+              <option value="deposit">🎯 หยอดเป้าหมาย</option>
+              <option value="withdraw">🔄 ถอนเงินออกมาใช้</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">จำนวนเงิน (บาท)</label>
+            <input id="dep-goal-amount" type="number" step="0.01" min="1" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required placeholder="0">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">ช่องทางชำระ / รับเงิน</label>
+          <select id="dep-goal-payment" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่ทำรายการ</label>
+          <input id="dep-goal-date" type="date" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">คำอธิบาย</label>
+          <input id="dep-goal-desc" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" placeholder="เช่น หยอดทริปประจำเดือน">
+        </div>
+        <button type="submit" class="w-full rounded-xl bg-purple-600 py-2.5 text-sm font-bold text-white hover:bg-purple-700">💾 บันทึกเป้าหมาย</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 7: สร้างเป้าหมายใหม่ -->
+  <div id="modal-create-goal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
+    <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-slate-700">🎯 สร้างเป้าหมายใหม่</h2>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600"><i data-lucide="x" width="20" height="20"></i></button>
+      </div>
+      <form id="form-create-goal" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อเป้าหมาย</label>
+          <input id="new-goal-name" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required placeholder="เช่น ทริปท่องเที่ยว Japan, เงินสำรองฉุกเฉิน 6 เดือน">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ยอดเป้าหมาย (บาท)</label>
+            <input id="new-goal-target" type="number" min="1" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" required placeholder="50000">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ยอดออมตั้งต้น (บาท)</label>
+            <input id="new-goal-initial" type="number" min="0" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" placeholder="0">
+          </div>
+        </div>
+        <button type="submit" class="w-full rounded-xl bg-purple-600 py-2.5 text-sm font-bold text-white hover:bg-purple-700">💾 บันทึกเป้าหมาย</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Template Row -->
+  <template id="transaction-template">
+    <div class="flex items-center gap-3 py-2.5 border-b border-slate-100 last:border-0">
+      <div class="tx-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-sm"></div>
+      <div class="min-w-0 flex-1">
+        <p class="tx-desc truncate text-xs font-semibold text-slate-700"></p>
+        <p class="tx-meta text-[11px] text-slate-400"></p>
+      </div>
+      <div class="text-right">
+        <strong class="tx-amount block text-xs"></strong>
+        <span class="tx-slip hidden text-[10px] text-sky-600 underline cursor-pointer mr-1">📎 สลิป</span>
+        <button type="button" class="tx-del text-[10px] text-slate-400 hover:text-rose-600">ลบ</button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Javascript Logic -->
+  <script>
+    // ⚠️ นำ URL จาก Apps Script Web App มาใส่ตรงนี้ครับ
+    const API_URL = "https://script.google.com/macros/s/AKfycbwCd43OJ5OW3mS0zCuxxSQegGSXEsUk6SB2EJWfl7x-vthaL4MkZrDfMZVOA_DM6h9t/exec";
+
+    const state = { records: [], debts: [], investments: [], goals: [], masterData: {}, monthOffset: 0 };
+    const fmt = new Intl.NumberFormat("th-TH", { style:"currency", currency:"THB", maximumFractionDigits:0 });
+    const monthNamesTH = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+
+    function selectedMonth() { const d = new Date(); d.setMonth(d.getMonth() + state.monthOffset); return d; }
+    function isCurrentView(record) { const d = new Date(record.date), m = selectedMonth(); return d.getMonth() === m.getMonth() && d.getFullYear() === m.getFullYear(); }
+    function updateMonthLabel() { document.getElementById("month-label").textContent = selectedMonth().toLocaleDateString("th-TH",{month:"short",year:"numeric"}); }
+
+    // API Helper: POST request
+    async function apiPost(action, payload) {
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action, ...payload })
+        });
+        const result = await res.json();
+        if (result.message) alert(result.message);
+        return result;
+      } catch (err) {
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อ API");
+        console.error(err);
+        return { isOk: false };
+      }
+    }
+
+    // Tab Switcher Logic
+    document.querySelectorAll("[data-tab]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-tab]").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach(tc => tc.classList.add("hidden"));
+        
+        btn.classList.add("active");
+        const tabId = btn.dataset.tab;
+        document.getElementById(tabId).classList.remove("hidden");
+
+        if (tabId === "tab-report") populateReportFilterOptions();
+      });
+    });
+
+    // Render Main Function
+    function renderAll() {
+      const viewRecords = state.records.filter(isCurrentView);
+      const income = viewRecords.filter(x => x.type === "Income").reduce((s,x) => s + Number(x.amount), 0);
+      const expense = viewRecords.filter(x => x.type === "Expense").reduce((s,x) => s + Number(x.amount), 0);
+      const totalSavings = state.investments.reduce((s,x) => s + Number(x.current), 0) + state.goals.reduce((s,x) => s + Number(x.current), 0);
+      const totalDebts = state.debts.reduce((s,x) => s + Number(x.current), 0);
+
+      document.getElementById("income-total").textContent = fmt.format(income);
+      document.getElementById("expense-total").textContent = fmt.format(expense);
+      document.getElementById("net-worth").textContent = fmt.format(totalSavings - totalDebts);
+      document.getElementById("net-worth-note").textContent = `เงินออมสะสม ${fmt.format(totalSavings)} · หนี้คงเหลือ ${fmt.format(totalDebts)}`;
+      document.getElementById("donut-total").textContent = fmt.format(expense);
+
+      renderTransactions(viewRecords.filter(x => x.refType === "General"));
+      renderCategories(viewRecords.filter(x => x.type === "Expense"));
+      renderDebtsTab();
+      renderSavingsTab();
+      renderGoalsTab();
+      if (!document.getElementById("tab-report").classList.contains("hidden")) {
+        populateReportFilterOptions();
+      }
+      lucide.createIcons();
+    }
+
+    function renderDebtsTab() {
+      const container = document.getElementById("debts-main-list"); container.innerHTML = "";
+      if (!state.debts.length) { container.innerHTML = '<p class="text-sm text-slate-400">ไม่มีรายการหนี้สิน 🎉</p>'; return; }
+
+      state.debts.forEach(d => {
+        const paid = Math.max(0, d.initial - d.current);
+        const pct = d.initial > 0 ? Math.min(100, (paid / d.initial) * 100) : 100;
+        const monthsLeft = d.targetMonthly > 0 ? Math.ceil(d.current / d.targetMonthly) : 0;
+
+        const card = document.createElement("div");
+        card.className = "soft-card rounded-3xl p-5 border border-rose-100";
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div><span class="text-xs font-semibold text-rose-600">หนี้สินคงเหลือ</span><h3 class="text-lg font-bold text-slate-700">${d.name}</h3></div>
+            <strong class="text-xl font-bold text-rose-700">${fmt.format(d.current)}</strong>
+          </div>
+          <div class="mt-3 h-3 overflow-hidden rounded-full bg-rose-100"><div class="h-full rounded-full bg-rose-400 transition-all duration-500" style="width:${pct}%"></div></div>
+          <div class="mt-2 flex items-center justify-between text-xs text-slate-500"><span>ชำระแล้ว ${Math.round(pct)}% (${fmt.format(paid)})</span><span>ยอดเต็ม ${fmt.format(d.initial)}</span></div>
+          <p class="mt-2 text-xs text-rose-600 bg-rose-50 p-2 rounded-xl">${monthsLeft > 0 ? `ผ่อนเดือนละ ${fmt.format(d.targetMonthly)} · อีกประมาณ ${monthsLeft} งวดหมดหนี้` : 'ชำระหมดแล้ว 🎉'}</p>
+          ${d.note ? `<p class="mt-1 text-[11px] text-slate-400">📝 ${d.note}</p>` : ''}
+          <button onclick="openPayDebtModal('${d.id}', '${d.name}', ${d.targetMonthly})" class="mt-4 w-full rounded-xl bg-rose-600 py-2 text-xs font-bold text-white hover:bg-rose-700">💳 จ่ายหนี้งวดนี้</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderSavingsTab() {
+      const container = document.getElementById("savings-main-list"); container.innerHTML = "";
+      if (!state.investments.length) { container.innerHTML = '<p class="text-sm text-slate-400">ยังไม่มีพอร์ตเงินออม</p>'; return; }
+
+      state.investments.forEach(inv => {
+        const card = document.createElement("div");
+        card.className = "soft-card rounded-3xl p-5 border border-emerald-100";
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div><span class="text-xs font-semibold text-emerald-600">${inv.type}</span><h3 class="text-lg font-bold text-slate-700">${inv.name}</h3></div>
+            <strong class="text-xl font-bold text-emerald-700">${fmt.format(inv.current)}</strong>
+          </div>
+          <p class="mt-3 text-xs text-slate-500">${inv.isPayrollDeducted ? '🟢 หักก่อนรับเงินเดือนอัตโนมัติ' : '🔵 จ่ายเองจากเงินสด/บัญชี'}</p>
+          <button onclick="openDepositInvModal('${inv.id}', '${inv.name}', ${inv.isPayrollDeducted})" class="mt-4 w-full rounded-xl bg-emerald-600 py-2 text-xs font-bold text-white hover:bg-emerald-700">🐷 ฝาก/ถอน เงินออม</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderGoalsTab() {
+      const container = document.getElementById("goals-main-list"); container.innerHTML = "";
+      if (!state.goals.length) { container.innerHTML = '<p class="text-sm text-slate-400">ยังไม่มีเป้าหมาย</p>'; return; }
+
+      state.goals.forEach(g => {
+        const pct = g.target > 0 ? Math.min(100, (g.current / g.target) * 100) : 0;
+        const card = document.createElement("div");
+        card.className = "soft-card rounded-3xl p-5 border border-purple-100";
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div><span class="text-xs font-semibold text-purple-600">Goal Progress</span><h3 class="text-lg font-bold text-slate-700">${g.name}</h3></div>
+            <strong class="text-xl font-bold text-purple-700">${fmt.format(g.current)}</strong>
+          </div>
+          <div class="mt-3 h-3 overflow-hidden rounded-full bg-purple-100"><div class="h-full rounded-full bg-purple-400 transition-all duration-500" style="width:${pct}%"></div></div>
+          <div class="mt-2 flex items-center justify-between text-xs text-slate-500"><span>สำเร็จ ${Math.round(pct)}%</span><span>เป้าหมาย ${fmt.format(g.target)}</span></div>
+          <button onclick="openDepositGoalModal('${g.id}', '${g.name}')" class="mt-4 w-full rounded-xl bg-purple-600 py-2 text-xs font-bold text-white hover:bg-purple-700">🎯 หยอด/ถอน เงินเป้าหมาย</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderTransactions(records) {
+      const list = document.getElementById("transaction-list"); list.innerHTML = "";
+      document.getElementById("empty-transactions").classList.toggle("hidden", records.length > 0);
+
+      records.slice(0, 7).forEach(record => {
+        const node = document.getElementById("transaction-template").content.firstElementChild.cloneNode(true);
+        const isIncome = record.type === "Income";
+        
+        node.querySelector(".tx-icon").textContent = isIncome ? "🍃" : "🌸";
+        node.querySelector(".tx-desc").textContent = record.description || record.category;
+        node.querySelector(".tx-meta").textContent = new Date(record.date).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"});
+        
+        const amt = node.querySelector(".tx-amount");
+        amt.textContent = (isIncome ? "+" : "-") + fmt.format(record.amount);
+        amt.className = "tx-amount block text-xs " + (isIncome ? "text-emerald-700" : "text-rose-600");
+
+        if (record.slipUrl) {
+          const slipBtn = node.querySelector(".tx-slip");
+          slipBtn.classList.remove("hidden");
+          slipBtn.addEventListener("click", () => window.open(record.slipUrl, "_blank"));
+        }
+
+        node.querySelector(".tx-del").addEventListener("click", () => handleDelete(record.rowIndex));
+        list.appendChild(node);
+      });
+    }
+
+    function renderCategories(expenses) {
+      const el = document.getElementById("category-list"); el.innerHTML = "";
+      const map = {}; expenses.forEach(x => map[x.category] = (map[x.category] || 0) + Number(x.amount));
+      const entries = Object.entries(map).sort((a,b) => b[1] - a[1]).slice(0, 4);
+      if (!entries.length) { el.innerHTML = '<p class="text-xs text-slate-400">ยังไม่มีรายจ่ายเดือนนี้</p>'; return; }
+      const max = entries[0][1];
+      entries.forEach(([cat, amount]) => {
+        const row = document.createElement("div");
+        row.innerHTML = `<div class="mb-1 flex justify-between text-xs"><span>📌 ${cat}</span><strong>${fmt.format(amount)}</strong></div><div class="h-2 overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-sky-300" style="width:${(amount/max)*100}%"></div></div>`;
+        el.appendChild(row);
+      });
+    }
+
+    function populateReportFilterOptions() {
+      const yearSelect = document.getElementById("report-year");
+      const monthSelect = document.getElementById("report-month");
+      const prevSelectedYear = yearSelect.value;
+      const prevSelectedMonth = monthSelect.value;
+
+      yearSelect.innerHTML = "";
+      monthSelect.innerHTML = "";
+
+      if (!state.records || state.records.length === 0) {
+        renderMonthlyReport();
+        return;
+      }
+
+      const availableYears = [...new Set(state.records.map(r => new Date(r.date).getFullYear()))].sort((a,b) => b - a);
+      availableYears.forEach(y => {
+        const opt = new Option(y + 543 + ` (${y})`, y);
+        yearSelect.add(opt);
+      });
+
+      if (prevSelectedYear && availableYears.includes(Number(prevSelectedYear))) {
+        yearSelect.value = prevSelectedYear;
+      } else {
+        yearSelect.value = availableYears[0];
+      }
+
+      updateMonthDropdownOptions();
+    }
+
+    function updateMonthDropdownOptions() {
+      const yearSelect = document.getElementById("report-year");
+      const monthSelect = document.getElementById("report-month");
+      const selectedYear = Number(yearSelect.value);
+      const prevMonth = monthSelect.value;
+      monthSelect.innerHTML = "";
+
+      const availableMonths = [...new Set(
+        state.records
+          .filter(r => new Date(r.date).getFullYear() === selectedYear)
+          .map(r => new Date(r.date).getMonth())
+      )].sort((a,b) => b - a);
+
+      availableMonths.forEach(m => {
+        const opt = new Option(monthNamesTH[m], m);
+        monthSelect.add(opt);
+      });
+
+      if (prevMonth !== "" && availableMonths.includes(Number(prevMonth))) {
+        monthSelect.value = prevMonth;
+      } else if (availableMonths.length > 0) {
+        monthSelect.value = availableMonths[0];
+      }
+
+      renderMonthlyReport();
+    }
+
+    document.getElementById("report-year").addEventListener("change", updateMonthDropdownOptions);
+    document.getElementById("report-month").addEventListener("change", renderMonthlyReport);
+
+    function renderMonthlyReport() {
+      const yearSelect = document.getElementById("report-year");
+      const monthSelect = document.getElementById("report-month");
+      const emptyMsg = document.getElementById("report-empty-msg");
+      const tableBody = document.getElementById("report-table-body");
+
+      if (!yearSelect.value || !monthSelect.value || state.records.length === 0) {
+        document.getElementById("report-header-title").textContent = "สรุปการเงินประจำเดือน";
+        document.getElementById("rpt-income-val").textContent = "฿0";
+        document.getElementById("rpt-expense-val").textContent = "฿0";
+        document.getElementById("rpt-savings-val").textContent = "฿0";
+        document.getElementById("rpt-net-val").textContent = "฿0";
+        tableBody.innerHTML = "";
+        emptyMsg.classList.remove("hidden");
+        return;
+      }
+
+      const year = Number(yearSelect.value);
+      const month = Number(monthSelect.value);
+
+      document.getElementById("report-header-title").textContent = `สรุปการเงินประจำเดือน ${monthNamesTH[month]} ${year + 543}`;
+
+      const filtered = state.records.filter(r => {
+        const d = new Date(r.date);
+        return d.getFullYear() === year && d.getMonth() === month;
+      });
+
+      const incomeList = filtered.filter(x => x.type === "Income");
+      const expenseList = filtered.filter(x => x.type === "Expense");
+      const savingsList = filtered.filter(x => x.refType === "Savings" || x.refType === "Goal");
+
+      const totalIncome = incomeList.reduce((s, x) => s + Number(x.amount), 0);
+      const totalExpense = expenseList.reduce((s, x) => s + Number(x.amount), 0);
+      const totalSavings = savingsList.reduce((s, x) => s + Number(x.amount), 0);
+      const netMonthly = totalIncome - totalExpense;
+
+      document.getElementById("rpt-income-val").textContent = fmt.format(totalIncome);
+      document.getElementById("rpt-income-cnt").textContent = `${incomeList.length} รายการรับ`;
+
+      document.getElementById("rpt-expense-val").textContent = fmt.format(totalExpense);
+      document.getElementById("rpt-expense-cnt").textContent = `${expenseList.length} รายการจ่าย`;
+
+      document.getElementById("rpt-savings-val").textContent = fmt.format(totalSavings);
+      document.getElementById("rpt-savings-cnt").textContent = `${savingsList.length} รายการออม`;
+
+      document.getElementById("rpt-net-val").textContent = fmt.format(netMonthly);
+
+      tableBody.innerHTML = "";
+      if (!filtered.length) {
+        emptyMsg.classList.remove("hidden");
+        return;
+      }
+      emptyMsg.classList.add("hidden");
+
+      filtered.forEach(r => {
+        const tr = document.createElement("tr");
+        const isInc = r.type === "Income";
+        const dateStr = new Date(r.date).toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "2-digit" });
+
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-medium text-slate-500">${dateStr}</td>
+          <td class="py-2.5 px-3 font-semibold text-slate-800">${r.description || r.category}</td>
+          <td class="py-2.5 px-3"><span class="rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] text-slate-600">${r.category}</span></td>
+          <td class="py-2.5 px-3 text-slate-500">${r.paymentMethod} ${r.isPayrollDeducted ? '<span class="text-[10px] text-emerald-600">(หักเงินเดือน)</span>' : ''}</td>
+          <td class="py-2.5 px-3 text-right font-bold ${isInc ? 'text-emerald-700' : 'text-rose-700'}">
+            ${isInc ? '+' : '-'}${fmt.format(r.amount)}
+          </td>
+          <td class="py-2.5 px-3 text-center">
+            ${r.slipUrl ? `<a href="${r.slipUrl}" target="_blank" class="text-sky-600 underline font-semibold">ดูสลิป</a>` : '<span class="text-slate-300">-</span>'}
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    // Modal Helpers
+    function closeAllModals() { document.querySelectorAll(".modal-backdrop").forEach(m => m.classList.remove("open")); }
+    document.querySelectorAll(".btn-close-modal").forEach(btn => btn.addEventListener("click", closeAllModals));
+
+    document.getElementById("btn-open-general-modal").addEventListener("click", () => {
+      document.getElementById("gen-date").value = new Date().toISOString().slice(0,10);
+      document.getElementById("modal-general").classList.add("open");
+    });
+
+    document.getElementById("btn-open-create-debt").addEventListener("click", () => document.getElementById("modal-create-debt").classList.add("open"));
+    document.getElementById("btn-open-create-inv").addEventListener("click", () => document.getElementById("modal-create-inv").classList.add("open"));
+    document.getElementById("btn-open-create-goal").addEventListener("click", () => document.getElementById("modal-create-goal").classList.add("open"));
+
+    function openPayDebtModal(id, name, targetMonthly) {
+      document.getElementById("pay-debt-id").value = id;
+      document.getElementById("pay-debt-title").textContent = `💳 จ่ายหนี้: ${name}`;
+      document.getElementById("pay-debt-amount").value = targetMonthly || "";
+      document.getElementById("pay-debt-date").value = new Date().toISOString().slice(0,10);
+      document.getElementById("modal-pay-debt").classList.add("open");
+    }
+
+    function openDepositInvModal(id, name, isPayroll) {
+      document.getElementById("dep-inv-id").value = id;
+      document.getElementById("deposit-inv-title").textContent = `🐷 พอร์ต: ${name}`;
+      document.getElementById("dep-inv-is-payroll").checked = Boolean(isPayroll);
+      document.getElementById("dep-inv-date").value = new Date().toISOString().slice(0,10);
+      document.getElementById("modal-deposit-inv").classList.add("open");
+    }
+
+    function openDepositGoalModal(id, name) {
+      document.getElementById("dep-goal-id").value = id;
+      document.getElementById("dep-goal-title").textContent = `🎯 เป้าหมาย: ${name}`;
+      document.getElementById("dep-goal-date").value = new Date().toISOString().slice(0,10);
+      document.getElementById("modal-deposit-goal").classList.add("open");
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = e => reject(e);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Submit Handlers
+    document.getElementById("form-general").addEventListener("submit", async e => {
+      e.preventDefault();
+      const fileInput = document.getElementById("gen-slip");
+      let slipBase64 = "", slipFileName = "";
+      if (fileInput.files.length > 0) {
+        slipFileName = fileInput.files[0].name; slipBase64 = await fileToBase64(fileInput.files[0]);
+      }
+      const payload = {
+        description: document.getElementById("gen-desc").value.trim(),
+        type: document.getElementById("gen-type").value,
+        amount: Number(document.getElementById("gen-amount").value),
+        category: document.getElementById("gen-category").value,
+        paymentMethod: document.getElementById("gen-payment").value,
+        date: document.getElementById("gen-date").value,
+        slipBase64, slipFileName
+      };
+      const res = await apiPost("createGeneralTransaction", payload);
+      if (res.isOk) { closeAllModals(); e.target.reset(); loadData(); }
+    });
+
+    document.getElementById("form-pay-debt").addEventListener("submit", async e => {
+      e.preventDefault();
+      const fileInput = document.getElementById("pay-debt-slip");
+      let slipBase64 = "", slipFileName = "";
+      if (fileInput.files.length > 0) {
+        slipFileName = fileInput.files[0].name; slipBase64 = await fileToBase64(fileInput.files[0]);
+      }
+      const payload = {
+        debtId: document.getElementById("pay-debt-id").value,
+        amount: Number(document.getElementById("pay-debt-amount").value),
+        paymentMethod: document.getElementById("pay-debt-payment").value,
+        date: document.getElementById("pay-debt-date").value,
+        description: document.getElementById("pay-debt-desc").value.trim(),
+        slipBase64, slipFileName
+      };
+      const res = await apiPost("payDebt", payload);
+      if (res.isOk) { closeAllModals(); e.target.reset(); loadData(); }
+    });
+
+    document.getElementById("form-create-debt").addEventListener("submit", async e => {
+      e.preventDefault();
+      const payload = {
+        name: document.getElementById("new-debt-name").value.trim(),
+        initial: Number(document.getElementById("new-debt-initial").value),
+        targetMonthly: Number(document.getElementById("new-debt-monthly").value),
+        note: document.getElementById("new-debt-note").value.trim()
+      };
+      const res = await apiPost("createNewDebt", payload);
+      if (res.isOk) { closeAllModals(); e.target.reset(); loadData(); }
+    });
+
+    document.getElementById("form-deposit-inv").addEventListener("submit", async e => {
+      e.preventDefault();
+      const payload = {
+        invId: document.getElementById("dep-inv-id").value,
+        actionType: document.getElementById("dep-inv-action").value,
+        amount: Number(document.getElementById("dep-inv-amount").value),
+        paymentMethod: document.getElementById("dep-inv-payment").value,
+        isPayrollDeducted: document.getElementById("dep-inv-is-payroll").checked,
+        date: document.getElementById("dep-inv-date").value,
+        description: document.getElementById("dep-inv-desc").value.trim()
+      };
+      const res = await apiPost("depositInvestment", payload);
+      if (res.isOk) { closeAllModals(); e.target.reset(); loadData(); }
+    });
+
+    document.getElementById("form-create-inv").addEventListener("submit", async e => {
+      e.preventDefault();
+      const payload = {
+        name: document.getElementById("new-inv-name").value.trim(),
+        type: document.getElementById("new-inv-type").value.trim(),
+        initial: Number(document.getElementById("new-inv-initial").value),
+        isPayrollDeducted: document.getElementById("new-inv-payroll").checked
+      };
+      const res = await apiPost("createNewInvestment", payload);
+      if (res.isOk) { closeAllModals(); e.target.reset(); loadData(); }
+    });
+
+    document.getElementById("form-deposit-goal").addEventListener("submit", async e => {
+      e.preventDefault();
+      const payload = {
+        goalId: document.getElementById("dep-goal-id").value,
+        actionType: document.getElementById("dep-goal-action").value,
+        amount: Number(document.getElementById("dep-goal-amount").value),
+        paymentMethod: document.getElementById("dep-goal-payment").value,
+        date: document.getElementById("dep-goal-date").value,
+        description: document.getElementById("dep-goal-desc").value.trim()
+      };
+      const res = await apiPost("depositGoal", payload);
+      if (res.isOk) { closeAllModals(); e.target.reset(); loadData(); }
+    });
+
+    document.getElementById("form-create-goal").addEventListener("submit", async e => {
+      e.preventDefault();
+      const payload = {
+        name: document.getElementById("new-goal-name").value.trim(),
+        target: Number(document.getElementById("new-goal-target").value),
+        initial: Number(document.getElementById("new-goal-initial").value)
+      };
+      const res = await apiPost("createNewGoal", payload);
+      if (res.isOk) { closeAllModals(); e.target.reset(); loadData(); }
+    });
+
+    async function handleDelete(rowIndex) {
+      if(!confirm("คุณหนูต้องการลบรายการนี้ใช่ไหมครับ?")) return;
+      const res = await apiPost("deleteTransaction", { rowIndex });
+      if(res.isOk) loadData();
+    }
+
+    async function loadData() {
+      updateMonthLabel();
+      try {
+        const response = await fetch(API_URL + "?action=getDashboard", {
+          method: "GET",
+          redirect: "follow"
+        });
+        const res = await response.json();
+        
+        if (res.isOk) {
+          state.records = res.records;
+          state.debts = res.debts;
+          state.investments = res.investments;
+          state.goals = res.goals;
+          state.masterData = res.masterData;
+
+          const catSelect = document.getElementById("gen-category"); catSelect.innerHTML = "";
+          (state.masterData.categories || []).forEach(c => catSelect.add(new Option(c, c)));
+
+          ["gen-payment", "pay-debt-payment", "dep-inv-payment", "dep-goal-payment"].forEach(id => {
+            const paySel = document.getElementById(id); paySel.innerHTML = "";
+            (state.masterData.paymentMethods || []).forEach(pm => paySel.add(new Option(pm, pm)));
+          });
+
+          renderAll();
+        }
+      } catch (err) {
+        console.error("Load Data Error:", err);
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
