@@ -27,8 +27,20 @@
 </head>
 
 <body style="background: rgb(248, 250, 252);">
+
+  <!-- 🔐 Login Screen Overlay -->
+  <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-100/95 p-4 backdrop-blur-sm transition-opacity">
+    <div class="soft-card w-full max-w-sm rounded-3xl p-8 text-center bg-white shadow-xl">
+      <div class="mb-4 text-4xl">🌸</div>
+      <h2 class="headline mb-2 text-2xl font-bold text-slate-700">ยืนยันตัวตน</h2>
+      <p class="mb-6 text-xs text-slate-500">กรุณาใส่รหัสผ่าน 6 หลัก เพื่อเข้าดูเป๋าเงิน</p>
+      <input id="pin-input" type="password" inputmode="numeric" class="mb-4 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-2xl tracking-[0.5em] focus:border-purple-400 focus:outline-none" maxlength="6">
+      <button id="btn-login" class="w-full rounded-xl bg-purple-600 py-3 font-bold text-white shadow-md hover:bg-purple-700 transition">เข้าสู่ระบบ</button>
+      <p id="login-error" class="mt-3 hidden text-xs text-rose-500">รหัสไม่ถูกต้อง ลองใหม่อีกครั้งนะครับ</p>
+    </div>
+  </div>
+
   <div class="app-shell">
-    
     <!-- Top Minimal Header -->
     <header class="w-full px-4 pt-5 sm:px-7 lg:px-10">
       <nav class="soft-card mx-auto flex max-w-7xl items-center justify-between rounded-3xl px-4 py-3 sm:px-6">
@@ -59,6 +71,7 @@
           <button data-tab="tab-debts" class="tab-btn flex-1 min-w-[120px] rounded-xl px-4 py-3 text-center transition hover:bg-white/60">💳 จัดการหนี้สิน</button>
           <button data-tab="tab-savings" class="tab-btn flex-1 min-w-[140px] rounded-xl px-4 py-3 text-center transition hover:bg-white/60">📈 เงินออม & พอร์ต</button>
           <button data-tab="tab-goals" class="tab-btn flex-1 min-w-[140px] rounded-xl px-4 py-3 text-center transition hover:bg-white/60">🎯 เป้าหมาย & สำรอง</button>
+          <button data-tab="tab-subs" class="tab-btn flex-1 min-w-[140px] rounded-xl px-4 py-3 text-center transition hover:bg-white/60">📅 การติดตามบิล</button>
           <button data-tab="tab-report" class="tab-btn flex-1 min-w-[140px] rounded-xl px-4 py-3 text-center transition hover:bg-white/60">📑 รายงานประจำเดือน</button>
         </div>
       </section>
@@ -75,7 +88,6 @@
           </button>
         </div>
 
-        <!-- Summary Cards -->
         <div class="grid gap-4 md:grid-cols-3">
           <article class="soft-card rounded-3xl p-5" style="background:#fff1cf">
             <div class="flex items-start justify-between">
@@ -140,7 +152,7 @@
             <h1 class="headline text-2xl sm:text-3xl font-bold text-slate-700">จัดการภาระหนี้สิน</h1>
           </div>
           <button id="btn-open-create-debt" class="rounded-2xl bg-rose-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-rose-700">
-            ➕ ตั้งภาระหนี้ก้อนใหม่ (ผ่อนบ้าน/ผ่อนมือถือ)
+            ➕ ตั้งภาระหนี้ก้อนใหม่
           </button>
         </div>
         <div id="debts-main-list" class="grid gap-4 md:grid-cols-2"></div>
@@ -174,7 +186,18 @@
         <div id="goals-main-list" class="grid gap-4 md:grid-cols-2"></div>
       </div>
 
-      <!-- TAB 5: Statement Report -->
+      <!-- TAB 5: Subscriptions -->
+      <div id="tab-subs" class="tab-content hidden">
+        <div class="mb-4 flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-sky-600">Fixed Expenses 📅</p>
+            <h1 class="headline text-2xl sm:text-3xl font-bold text-slate-700">จัดการ Subscription & Pass</h1>
+          </div>
+        </div>
+        <div id="subs-main-list" class="grid gap-4 md:grid-cols-3"></div>
+      </div>
+
+      <!-- TAB 6: Statement Report -->
       <div id="tab-report" class="tab-content hidden">
         <div class="soft-card mb-6 rounded-3xl p-5">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -182,7 +205,6 @@
               <p class="text-xs font-semibold text-sky-600">Monthly Statement</p>
               <h2 class="text-xl font-bold text-slate-700">📑 รายงานสรุปการเงินประจำเดือน</h2>
             </div>
-            
             <div id="report-filter-container" class="flex items-center gap-2">
               <label class="text-xs font-semibold text-slate-600">เลือกรอบเดือน/ปี:</label>
               <select id="report-year" class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 bg-white"></select>
@@ -252,7 +274,6 @@
   </div>
 
   <!-- MODALS -->
-  <!-- MODAL 1: บันทึกกินใช้ทั่วไป -->
   <div id="modal-general" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
     <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
       <div class="flex items-center justify-between mb-4">
@@ -300,7 +321,6 @@
     </div>
   </div>
 
-  <!-- MODAL 2: จ่ายหนี้สิน -->
   <div id="modal-pay-debt" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
     <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
       <div class="flex items-center justify-between mb-4">
@@ -337,7 +357,6 @@
     </div>
   </div>
 
-  <!-- MODAL 3: เพิ่มรายการหนี้ก้อนใหม่ -->
   <div id="modal-create-debt" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
     <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
       <div class="flex items-center justify-between mb-4">
@@ -368,7 +387,6 @@
     </div>
   </div>
 
-  <!-- MODAL 4: ฝาก/ถอน เงินออม -->
   <div id="modal-deposit-inv" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
     <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
       <div class="flex items-center justify-between mb-4">
@@ -414,7 +432,6 @@
     </div>
   </div>
 
-  <!-- MODAL 5: เพิ่มพอร์ตเงินออมใหม่ -->
   <div id="modal-create-inv" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
     <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
       <div class="flex items-center justify-between mb-4">
@@ -445,7 +462,6 @@
     </div>
   </div>
 
-  <!-- MODAL 6: หยอด/ถอน เป้าหมาย -->
   <div id="modal-deposit-goal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
     <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
       <div class="flex items-center justify-between mb-4">
@@ -487,7 +503,6 @@
     </div>
   </div>
 
-  <!-- MODAL 7: สร้างเป้าหมายใหม่ -->
   <div id="modal-create-goal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-3">
     <div class="modal-panel soft-card w-full max-w-md rounded-3xl p-6">
       <div class="flex items-center justify-between mb-4">
@@ -514,7 +529,6 @@
     </div>
   </div>
 
-  <!-- Template Row -->
   <template id="transaction-template">
     <div class="flex items-center gap-3 py-2.5 border-b border-slate-100 last:border-0">
       <div class="tx-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-sm"></div>
@@ -535,7 +549,36 @@
     // ⚠️ นำ URL จาก Apps Script Web App มาใส่ตรงนี้ครับ
     const API_URL = "https://script.google.com/macros/s/AKfycbwCd43OJ5OW3mS0zCuxxSQegGSXEsUk6SB2EJWfl7x-vthaL4MkZrDfMZVOA_DM6h9t/exec";
 
-    const state = { records: [], debts: [], investments: [], goals: [], masterData: {}, monthOffset: 0 };
+    // 🔐 ระบบ Authentication
+    const SECRET_PIN = "123456"; // เปลี่ยนรหัสผ่าน 6 หลักตรงนี้
+    const SESSION_HOURS = 8;
+
+    function checkAuth() {
+      const sessionTime = localStorage.getItem("sparkle_session");
+      const now = new Date().getTime();
+      
+      if (sessionTime && (now - sessionTime < SESSION_HOURS * 60 * 60 * 1000)) {
+        document.getElementById("login-screen").classList.add("hidden");
+        loadData(); 
+      } else {
+        document.getElementById("login-screen").classList.remove("hidden");
+        localStorage.removeItem("sparkle_session");
+      }
+    }
+
+    document.getElementById("btn-login").addEventListener("click", () => {
+      const pin = document.getElementById("pin-input").value;
+      if (pin === SECRET_PIN) {
+        localStorage.setItem("sparkle_session", new Date().getTime());
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("login-error").classList.add("hidden");
+        loadData();
+      } else {
+        document.getElementById("login-error").classList.remove("hidden");
+      }
+    });
+
+    const state = { records: [], debts: [], investments: [], goals: [], subscriptions: [], masterData: {}, monthOffset: 0 };
     const fmt = new Intl.NumberFormat("th-TH", { style:"currency", currency:"THB", maximumFractionDigits:0 });
     const monthNamesTH = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
 
@@ -543,7 +586,6 @@
     function isCurrentView(record) { const d = new Date(record.date), m = selectedMonth(); return d.getMonth() === m.getMonth() && d.getFullYear() === m.getFullYear(); }
     function updateMonthLabel() { document.getElementById("month-label").textContent = selectedMonth().toLocaleDateString("th-TH",{month:"short",year:"numeric"}); }
 
-    // API Helper: POST request
     async function apiPost(action, payload) {
       try {
         const res = await fetch(API_URL, {
@@ -561,7 +603,6 @@
       }
     }
 
-    // Tab Switcher Logic
     document.querySelectorAll("[data-tab]").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll("[data-tab]").forEach(b => b.classList.remove("active"));
@@ -575,7 +616,6 @@
       });
     });
 
-    // Render Main Function
     function renderAll() {
       const viewRecords = state.records.filter(isCurrentView);
       const income = viewRecords.filter(x => x.type === "Income").reduce((s,x) => s + Number(x.amount), 0);
@@ -594,6 +634,8 @@
       renderDebtsTab();
       renderSavingsTab();
       renderGoalsTab();
+      renderSubscriptions();
+      
       if (!document.getElementById("tab-report").classList.contains("hidden")) {
         populateReportFilterOptions();
       }
@@ -661,6 +703,51 @@
           <div class="mt-3 h-3 overflow-hidden rounded-full bg-purple-100"><div class="h-full rounded-full bg-purple-400 transition-all duration-500" style="width:${pct}%"></div></div>
           <div class="mt-2 flex items-center justify-between text-xs text-slate-500"><span>สำเร็จ ${Math.round(pct)}%</span><span>เป้าหมาย ${fmt.format(g.target)}</span></div>
           <button onclick="openDepositGoalModal('${g.id}', '${g.name}')" class="mt-4 w-full rounded-xl bg-purple-600 py-2 text-xs font-bold text-white hover:bg-purple-700">🎯 หยอด/ถอน เงินเป้าหมาย</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderSubscriptions() {
+      const container = document.getElementById("subs-main-list"); 
+      container.innerHTML = "";
+      if (!state.subscriptions || state.subscriptions.length === 0) { 
+        container.innerHTML = '<p class="text-sm text-slate-400">ไม่มีรายการ Subscription</p>'; 
+        return; 
+      }
+
+      state.subscriptions.forEach(sub => {
+        const nameLower = sub.name.toLowerCase();
+        let icon = "📅";
+        if (nameLower.includes('cursor') || nameLower.includes('gemini')) icon = "💻";
+        if (nameLower.includes('pass') || nameLower.includes('honkai') || nameLower.includes('genshin') || nameLower.includes('gossip')) icon = "🎮";
+        if (nameLower.includes('whoscall')) icon = "📱";
+
+        const dateStr = sub.nextDueDate ? new Date(sub.nextDueDate).toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "numeric" }) : "-";
+        
+        const card = document.createElement("div");
+        card.className = `soft-card rounded-3xl p-5 border ${sub.autoRecord ? 'border-sky-200' : 'border-slate-200'}`;
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div class="flex gap-3">
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-lg">${icon}</div>
+              <div>
+                <h3 class="font-bold text-slate-700">${sub.name}</h3>
+                <p class="text-[11px] text-slate-500">${sub.category} • ผ่าน ${sub.paymentMethod}</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 flex items-end justify-between">
+            <div>
+              <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">บิลรอบถัดไป</p>
+              <p class="text-sm font-bold text-sky-700">${dateStr}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">รอบ ${sub.cycle}</p>
+              <strong class="text-lg font-bold text-rose-600">${fmt.format(sub.amount)}</strong>
+            </div>
+          </div>
+          ${sub.autoRecord ? '<div class="mt-3 rounded-lg bg-sky-50 px-2 py-1 text-center text-[10px] font-semibold text-sky-600">⚡ ตัดยอดเข้าบัญชีอัตโนมัติ</div>' : ''}
         `;
         container.appendChild(card);
       });
@@ -803,13 +890,10 @@
 
       document.getElementById("rpt-income-val").textContent = fmt.format(totalIncome);
       document.getElementById("rpt-income-cnt").textContent = `${incomeList.length} รายการรับ`;
-
       document.getElementById("rpt-expense-val").textContent = fmt.format(totalExpense);
       document.getElementById("rpt-expense-cnt").textContent = `${expenseList.length} รายการจ่าย`;
-
       document.getElementById("rpt-savings-val").textContent = fmt.format(totalSavings);
       document.getElementById("rpt-savings-cnt").textContent = `${savingsList.length} รายการออม`;
-
       document.getElementById("rpt-net-val").textContent = fmt.format(netMonthly);
 
       tableBody.innerHTML = "";
@@ -841,7 +925,6 @@
       });
     }
 
-    // Modal Helpers
     function closeAllModals() { document.querySelectorAll(".modal-backdrop").forEach(m => m.classList.remove("open")); }
     document.querySelectorAll(".btn-close-modal").forEach(btn => btn.addEventListener("click", closeAllModals));
 
@@ -884,14 +967,11 @@
       });
     }
 
-    // Submit Handlers
     document.getElementById("form-general").addEventListener("submit", async e => {
       e.preventDefault();
       const fileInput = document.getElementById("gen-slip");
       let slipBase64 = "", slipFileName = "";
-      if (fileInput.files.length > 0) {
-        slipFileName = fileInput.files[0].name; slipBase64 = await fileToBase64(fileInput.files[0]);
-      }
+      if (fileInput.files.length > 0) { slipFileName = fileInput.files[0].name; slipBase64 = await fileToBase64(fileInput.files[0]); }
       const payload = {
         description: document.getElementById("gen-desc").value.trim(),
         type: document.getElementById("gen-type").value,
@@ -909,9 +989,7 @@
       e.preventDefault();
       const fileInput = document.getElementById("pay-debt-slip");
       let slipBase64 = "", slipFileName = "";
-      if (fileInput.files.length > 0) {
-        slipFileName = fileInput.files[0].name; slipBase64 = await fileToBase64(fileInput.files[0]);
-      }
+      if (fileInput.files.length > 0) { slipFileName = fileInput.files[0].name; slipBase64 = await fileToBase64(fileInput.files[0]); }
       const payload = {
         debtId: document.getElementById("pay-debt-id").value,
         amount: Number(document.getElementById("pay-debt-amount").value),
@@ -997,10 +1075,7 @@
     async function loadData() {
       updateMonthLabel();
       try {
-        const response = await fetch(API_URL + "?action=getDashboard", {
-          method: "GET",
-          redirect: "follow"
-        });
+        const response = await fetch(API_URL + "?action=getDashboard", { method: "GET", redirect: "follow" });
         const res = await response.json();
         
         if (res.isOk) {
@@ -1008,6 +1083,7 @@
           state.debts = res.debts;
           state.investments = res.investments;
           state.goals = res.goals;
+          state.subscriptions = res.subscriptions;
           state.masterData = res.masterData;
 
           const catSelect = document.getElementById("gen-category"); catSelect.innerHTML = "";
@@ -1025,7 +1101,8 @@
       }
     }
 
-    loadData();
+    // เริ่มต้นระบบด้วยการเช็คสิทธิ์
+    checkAuth();
   </script>
 </body>
 </html>
