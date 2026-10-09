@@ -1,6 +1,6 @@
 {
-    "name": "เป๋าเงินของคุณหนู Sparkle",
-    "short_name": "เป๋าเงิน",
+    "name": "SparkleDex",
+    "short_name": "SparkleDex",
     "description": "Financial Dashboard & Tracker",
     "start_url": "/?source=pwa",
     "display": "standalone",
@@ -8,7 +8,7 @@
     "theme_color": "#f8fafc",
     "icons": [
     {
-    "src": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+    "src": "https://cdn-icons-png.flaticon.com/512/3103/3103387.png",
     "sizes": "512x512",
     "type": "image/png",
     "purpose": "any maskable"

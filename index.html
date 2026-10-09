@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เป๋าเงินของคุณหนู - Financial Dashboard</title>
+  <title>SparkleDex - Financial Dashboard</title>
   
   <!-- 🟢 ตั้งค่า PWA สำหรับเพิ่มลงหน้าจอโฮมมือถือ -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f8fafc">
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+  <!-- 🌟 เปลี่ยนไอคอนเป็นรูปดาววิ้งๆ สำหรับ iPhone -->
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3103/3103387.png">
   
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <!-- นำเข้าไลบรารี Popup สวยๆ (SweetAlert2) -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
   
@@ -36,8 +36,6 @@
     @media (min-width: 640px) { .cal-grid { gap: 6px; } .cal-cell { border-radius: 12px; padding: 6px; } }
     .cal-cell:hover { border-color: #cbd5e1; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); transform: translateY(-2px); }
     .cal-cell.empty { background: transparent; border: none; cursor: default; box-shadow:none; transform: none; }
-    
-    /* ปรับแต่ง SweetAlert ให้ฟอนต์ตรงกับเว็บ */
     .swal2-popup { font-family: "Mitr", sans-serif; border-radius: 24px !important; }
     .swal2-title { font-size: 1.25rem !important; color: #334155 !important; }
   </style>
@@ -47,8 +45,8 @@
   <!-- Login Screen -->
   <div id="login-screen" class="fixed inset-0 z-[2000] flex items-center justify-center bg-slate-900/40 backdrop-blur-md transition-opacity">
     <div class="soft-card w-11/12 max-w-sm rounded-3xl p-6 sm:p-8 text-center bg-white shadow-2xl">
-      <div class="mb-4 text-4xl sm:text-5xl animate-bounce">🌸</div>
-      <h2 class="mb-2 text-xl sm:text-2xl font-semibold text-slate-800">เป๋าเงินคุณหนู</h2>
+      <div class="mb-4 text-4xl sm:text-5xl animate-bounce">🌟</div>
+      <h2 class="mb-2 text-xl sm:text-2xl font-semibold text-slate-800">SparkleDex</h2>
       <p id="login-status" class="mb-6 text-xs sm:text-sm text-slate-500">กำลังเชื่อมต่อระบบ...</p>
       <button id="btn-login-line" class="hidden w-full rounded-xl bg-[#06C755] py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white shadow-md hover:bg-[#05b34c] transition">เข้าสู่ระบบด้วย LINE</button>
     </div>
@@ -58,9 +56,9 @@
     <header class="w-full px-3 pt-4 sm:px-7 lg:px-10">
       <nav class="soft-card mx-auto flex max-w-7xl items-center justify-between rounded-2xl sm:rounded-3xl px-4 py-3 sm:px-6">
         <div class="flex items-center gap-2 sm:gap-3">
-          <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl bg-rose-100 text-xl sm:text-2xl">🌸</div>
+          <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl bg-amber-100 text-xl sm:text-2xl">🌟</div>
           <div>
-            <p class="font-semibold text-slate-700 text-sm sm:text-lg leading-tight">เป๋าเงินของคุณหนู Sparkle✨</p>
+            <p class="font-semibold text-slate-700 text-sm sm:text-lg leading-tight">SparkleDex ✨</p>
             <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">พื้นที่เล็ก ๆ เพื่ออนาคตที่อุ่นใจ💕</p>
           </div>
         </div>
@@ -170,11 +168,12 @@
           LINE_USER_ID = profile.userId;
           
           document.getElementById("greeting-name").textContent = `สวัสดีค่ะ ${profile.displayName} 🌷`;
-       /*   document.getElementById("show-line-id").textContent = `LINE ID ของคุณหนูคือ: ${profile.userId}`; */          
+          /* document.getElementById("show-line-id").textContent = `LINE ID ของคุณหนูคือ: ${profile.userId}`; */
+          
           if (profile.pictureUrl) {
             document.getElementById("profile-img").src = profile.pictureUrl;
           } else {
-            document.getElementById("profile-img").src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+            document.getElementById("profile-img").src = "https://cdn-icons-png.flaticon.com/512/3103/3103387.png";
           }
           document.getElementById("profile-img").classList.remove("hidden");
           
@@ -456,4 +455,3 @@
     document.getElementById("form-goal").addEventListener("submit", e => submitHandler(e, "saveGoal", () => ({ id: document.getElementById("form-goal-id").value, name: document.getElementById("form-goal-name").value, target: document.getElementById("form-goal-target").value, initial: document.getElementById("form-goal-initial").value })));
   </script>
 </body>
-</html>
