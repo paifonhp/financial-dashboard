@@ -170,8 +170,7 @@
           LINE_USER_ID = profile.userId;
           
           document.getElementById("greeting-name").textContent = `สวัสดีค่ะ ${profile.displayName} 🌷`;
-          document.getElementById("show-line-id").textContent = `LINE ID ของคุณหนูคือ: ${profile.userId}`;
-          
+       /*   document.getElementById("show-line-id").textContent = `LINE ID ของคุณหนูคือ: ${profile.userId}`; */          
           if (profile.pictureUrl) {
             document.getElementById("profile-img").src = profile.pictureUrl;
           } else {
